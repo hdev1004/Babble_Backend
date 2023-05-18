@@ -10,7 +10,7 @@ npm i nodemon -g
 nodemon server.js
 ```
 
-<
+<br>
 
 ### 📕 참고
 
