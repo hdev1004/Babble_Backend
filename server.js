@@ -1,19 +1,23 @@
 
 const express = require("express");
 const helmet = require("helmet");
-const port = process.env.WEB_PORT;
 require('dotenv').config();
+const port = process.env.WEB_PORT;
 const testConnection = require("./testConnection");
 
-// express 는 함수이므로, 반환값을 변수에 저장한다.
 const app = express();
 
-// 보안설정
 app.use(helmet());
+app.use('/images', express.static('images'))
 app.disable('x-powered-by');
 
 app.get("/", (req, res) => {
-    res.send(`<p>솜사탕씻은너구리</p>`)  
+    res.send(`
+        <div>
+            <p>솜사탕씻은너구리</p>
+            <img width="400px" src="images/title.png"></img>
+        </div>
+    `)  
 })
 
 app.get('/users', testConnection.getAllUsers);
