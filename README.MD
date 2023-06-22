@@ -2,6 +2,10 @@
 
 ### 📕 Usage 
 
+`.env_example` 파일명을 `.env`로 변경
+
+<br>
+
 ```shell
 git clone https://github.com/hdev1004/notice_board_backend.git
 npm i 
