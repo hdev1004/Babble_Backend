@@ -1,33 +1,32 @@
 
-const util = require("util");
-const crypto = require("crypto");
+const CryptoJS = require("crypto-js");
+const iterations = 44531;
 
-const randomBytesPromise = util.promisify(crypto.randomBytes);
-const pbkdf2Promise = util.promisify(crypto.pbkdf2);
+const createSalt = () => {
+    let salt = CryptoJS.lib.WordArray.random(64).toString(CryptoJS.enc.Base64);
+    return salt;
+}
 
-const createSalt = async () => {
-    const buf = await randomBytesPromise(64);
+const encryptPassword = async (password, salt) => {
+    const encryptedPassword = await CryptoJS.PBKDF2(password, salt, {
+      keySize: 16,
+      iterations: iterations
+    }).toString(CryptoJS.enc.Base64);
   
-    return buf.toString("base64");
-  };
+    return {encryptedPassword, salt};
+}
 
-const createHashedPassword = async (password) => {
-    const salt = await createSalt();
-    const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
-    const hashedPassword = key.toString("base64");
+const validatePassword = async (password, salt, userPassword) => {
+    const encryptedPassword = await CryptoJS.PBKDF2(password, salt, {
+        keySize: 16,
+        iterations: iterations
+    }).toString(CryptoJS.enc.Base64);
 
-    return { hashedPassword, salt };
-};
-
-const verifyPassword = async (password, userSalt, userPassword) => {
-    const key = await pbkdf2Promise(password, userSalt, 104906, 64, "sha512");
-    const hashedPassword = key.toString("base64");
-
-    if (hashedPassword === userPassword) return true;
-    return false;
+    return encryptedPassword === userPassword;
 };
 
 module.exports = {
-    createHashedPassword,
-    verifyPassword
+    createSalt,
+    encryptPassword,
+    validatePassword
 }

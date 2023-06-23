@@ -3,24 +3,27 @@ require('dotenv').config();
 
 const express = require("express");
 const helmet = require("helmet");
-const http = require('http');
-const https = require('https');
 const fs = require('fs');
+const cors = require("cors");
+//const hash = md5("sisiblog");
 
-const encryption = require("./FUNCTION/encryption");
-const jwt = require("./FUNCTION/jwt");
+//📕 GET
+const RegisterGET = require("./GET/REGISTER/register");
 
-const UserGet = require("./POST/USER/user");
-
+//📕 POST
+const LoginPOST = require("./POST/USER/login");
+const RegisterPOST = require("./POST/USER/register");
 
 const port = process.env.WEB_PORT;
 const app = express();
+
 
 const options = {
     key: fs.readFileSync('./key/rootca.key'),
     cert: fs.readFileSync('./key/rootca.crt')
 };
 
+app.use(cors());
 app.use(express.json());
 app.use(helmet());
 app.use('/images', express.static('images'));
@@ -29,21 +32,9 @@ app.disable('x-powered-by');
 
 //let data = jwt.tokenGenerator("hello", "test");
 //console.log("TOKEN : ", data);
-let result = jwt.tokenGenerator({
-    id: "11",
-    pw: "22"
-}, 1);
-console.log("RESULT : ", result);
 
-result = jwt.tokenGenerator({
-    id: "11",
-    pw: "22"
-}, 2);
-console.log("RESULT : ", result);
 
 app.get("/", async (req, res) => {
-    console.log(result);
-
     res.send(`
         <div>
             <p>솜사탕씻은너구리</p>
@@ -53,9 +44,17 @@ app.get("/", async (req, res) => {
 })
 
 
+//📕 GET
+//└─📜 Register
+app.get("/register/:id", RegisterGET.isIdDuplicate);
+
+
 //📕 POST
-//└─📜 USER
-app.post("/user", UserGet.getUser);
+//└─📜 User
+app.post("/user", LoginPOST.loginCheck);
+//└─📜 Register
+app.post("/register", RegisterPOST.register);
+
 //GET
 
 
