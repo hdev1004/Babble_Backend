@@ -8,10 +8,11 @@ const cors = require("cors");
 //const hash = md5("sisiblog");
 
 //📕 GET
+const UserGET = require("./GET/USER/login");
 const RegisterGET = require("./GET/REGISTER/register");
 
 //📕 POST
-const LoginPOST = require("./POST/USER/login");
+const UserPOST = require("./POST/USER/login");
 const RegisterPOST = require("./POST/USER/register");
 
 const port = process.env.WEB_PORT;
@@ -27,6 +28,8 @@ app.use(cors());
 app.use(express.json());
 app.use(helmet());
 app.use('/images', express.static('images'));
+
+
 
 app.disable('x-powered-by');
 
@@ -45,13 +48,16 @@ app.get("/", async (req, res) => {
 
 
 //📕 GET
+//└─📜 User
+app.get("/login/salt/:id", UserGET.getSalt);
 //└─📜 Register
-app.get("/register/:id", RegisterGET.isIdDuplicate);
+app.get("/register/id/:id", RegisterGET.isIdDuplicate);
+app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 
 
 //📕 POST
 //└─📜 User
-app.post("/user", LoginPOST.loginCheck);
+app.post("/login", UserPOST.loginCheck);
 //└─📜 Register
 app.post("/register", RegisterPOST.register);
 

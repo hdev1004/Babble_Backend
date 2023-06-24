@@ -1,11 +1,11 @@
 const connection = require("../../db");
 
-const loginCheck = (req, res) => {
+const getSalt = (req, res) => {
     let result = {};
-    let body = req.body;
-    console.log(body);
+    let param = req.params;
+    console.log(param);
  
-    connection.query(`SELECT id, nickname, email, token from LOGIN WHERE id="${body.id}" and pw="${body.pw}"`, (error, rows, fields) => {
+    connection.query(`SELECT salt from LOGIN WHERE id="${param.id}"`, (error, rows, fields) => {
         if (error) {
             result = {
                 message: error.message,
@@ -15,20 +15,21 @@ const loginCheck = (req, res) => {
         } else {
             if(rows.length === 0) {
                 result = {
-                    message: "200 OK",
-                    data: {}
-                }
-            }
-            else if(rows.length === 1) {
+                    message: "204 Content",
+                    data: {
+                        salt: ""
+                    }
+                };
+            } else if(rows.length === 1) {
                 result = {
                     message: "200 OK",
                     data: rows[0]
-                };    
+                };
             } else {
                 result = {
                     message: "400 Bad Request",
                     data: {}
-                }
+                };
             }
             return res.send(result);
         }
@@ -36,5 +37,5 @@ const loginCheck = (req, res) => {
 }
 
 module.exports = {
-    loginCheck
+    getSalt
 }
