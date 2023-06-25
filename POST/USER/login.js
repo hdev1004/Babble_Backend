@@ -35,7 +35,7 @@ const loginCheck = (req, res) => {
             return res.send(result);
         }
     });
-    connection.end();
+    
 }
 
 
@@ -126,7 +126,7 @@ const tokenGenerator = async (req, res) => {
             }
         }
     })
-    connection.end();
+    
 }
 
 module.exports = {
