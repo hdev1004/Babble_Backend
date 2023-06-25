@@ -21,6 +21,7 @@ const register = (req, res) => {
             return res.send(result);
         }
     });
+    connection.end();
     
 }
 

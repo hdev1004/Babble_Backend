@@ -35,6 +35,7 @@ const getSalt = (req, res) => {
             return res.send(result);
         }
     });
+    connection.end();
 }
 
 const verifyToken = (req, res) => {
@@ -70,6 +71,7 @@ const verifyToken = (req, res) => {
             return res.send(result)
         }
     })
+    connection.end();
 }
 
 

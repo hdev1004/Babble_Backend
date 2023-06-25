@@ -33,7 +33,7 @@ const tokenGenerator = (payload, time) => {
       // jwt.sign() 메소드: 토큰 발급 
       token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: time, //1분
-        issuer: '토큰 발급자'
+        issuer: 'jinwon-kim'
       });
     } catch(error) {
         console.log(error);

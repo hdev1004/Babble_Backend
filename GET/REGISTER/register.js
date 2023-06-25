@@ -20,6 +20,7 @@ const isNicknameDuplicate = (req, res) => {
             return res.send(result);
         }
     });
+    connection.end();
 }
 
 const isIdDuplicate = (req, res) => {
@@ -41,6 +42,7 @@ const isIdDuplicate = (req, res) => {
             return res.send(result);
         }
     });
+    connection.end();
 }
 
 module.exports = {
