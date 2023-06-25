@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const verifyToken = (authorization) => {
   // 인증 완료
   try {
-    res = jwt.verify(authorization, process.env.JWT_SECRET)
+    res = jwt.verify(authorization, process.env.JWT_SECRET);
+    console.log(res);
     return true;
   }
   
@@ -20,12 +21,18 @@ const verifyToken = (authorization) => {
   }
 }
 
+/**
+ * Token 발급하는 함수
+ * @param {*} payload 
+ * @param {*} time 1d : 1일, 1h : 1시간, 1m : 1분
+ * @returns 
+ */
 const tokenGenerator = (payload, time) => {
     let token = null;
     try {
       // jwt.sign() 메소드: 토큰 발급 
       token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: time + 'm', //1분
+        expiresIn: time, //1분
         issuer: '토큰 발급자'
       });
     } catch(error) {

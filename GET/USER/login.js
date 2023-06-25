@@ -1,4 +1,5 @@
 const connection = require("../../db");
+const jwt = require("../../FUNCTION/jwt");
 
 const getSalt = (req, res) => {
     let result = {};
@@ -36,6 +37,44 @@ const getSalt = (req, res) => {
     });
 }
 
+const verifyToken = (req, res) => {
+    let result = {};
+    let param = req.params;
+    let headers = req.headers;
+
+    connection.query(`SELECT refresh_token FROM TOKEN WHERE token="${param.token}"`,  (error, rows, fields) => {
+        if (error) {
+            result = {
+                message: error.message,
+                data: error.errno
+            }
+            return res.send(result);
+        } else {
+            console.log(rows);
+            let count = rows.length;
+            if(count === 1) { //데이터가 있을때
+                let access_token_valid = jwt.verifyToken(headers.authorization);
+                let refresh_token_valid = jwt.verifyToken(rows[0].refresh_token);
+                result = {
+                    message: "200 OK",
+                    data: true,
+                    access_token: access_token_valid,
+                    refresh_token: refresh_token_valid
+                }
+            } else {
+                result = {
+                    message: "400 Bad Request",
+                    data: false
+                }
+            }
+            return res.send(result)
+        }
+    })
+}
+
+
+
 module.exports = {
-    getSalt
+    getSalt,
+    verifyToken
 }

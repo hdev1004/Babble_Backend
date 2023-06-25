@@ -13,7 +13,7 @@ const RegisterGET = require("./GET/REGISTER/register");
 
 //📕 POST
 const UserPOST = require("./POST/USER/login");
-const RegisterPOST = require("./POST/USER/register");
+const RegisterPOST = require("./POST/REGISTER/register");
 
 const port = process.env.WEB_PORT;
 const app = express();
@@ -50,6 +50,8 @@ app.get("/", async (req, res) => {
 //📕 GET
 //└─📜 User
 app.get("/login/salt/:id", UserGET.getSalt);
+app.get("/login/jwt/token/:token", UserGET.verifyToken);
+
 //└─📜 Register
 app.get("/register/id/:id", RegisterGET.isIdDuplicate);
 app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
@@ -58,6 +60,7 @@ app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 //📕 POST
 //└─📜 User
 app.post("/login", UserPOST.loginCheck);
+app.post("/login/jwt/token", UserPOST.tokenGenerator);
 //└─📜 Register
 app.post("/register", RegisterPOST.register);
 
