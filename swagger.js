@@ -8,7 +8,7 @@ const options = {
       },
       servers: [
         {
-          url: 'http://localhost:5000/',
+          url: 'http://210.114.19.32:5000/',
         },
       ],
     },
