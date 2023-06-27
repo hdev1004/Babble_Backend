@@ -1,12 +1,17 @@
 const getConnection = require("../../db");
 const jwt = require("../../FUNCTION/jwt");
 
-
+/**
+ * 로그인 확인하는 함수
+ * @param {*} req 
+ * @param {*} res 
+ */
 const loginCheck = (req, res) => {
     let result = {};
     let body = req.body;
     console.log(body);
- 
+
+
     getConnection((connection) => {
         connection.query(`SELECT id, nickname, email, token from LOGIN WHERE id="${body.id}" and pw="${body.pw}"`, (error, rows, fields) => {
             if (error) {

@@ -1,6 +1,11 @@
 const getConnection = require("../../db");
 const jwt = require("../../FUNCTION/jwt");
 
+/**
+ * Salt값을 디비에서 받아오는 함수
+ * @param {*} req 
+ * @param {*} res 
+ */
 const getSalt = (req, res) => {
     let result = {};
     let param = req.params;
@@ -41,10 +46,16 @@ const getSalt = (req, res) => {
     
 }
 
+/**
+ * Access Token, Refresh Token이 유효한지 확인
+ * @param {*} req 
+ * @param {*} res 
+ */
 const verifyToken = (req, res) => {
     let result = {};
     let param = req.params;
     let headers = req.headers;
+    console.log(headers);
 
     getConnection((connection) => {
         connection.query(`SELECT refresh_token FROM TOKEN WHERE token="${param.token}"`,  (error, rows, fields) => {

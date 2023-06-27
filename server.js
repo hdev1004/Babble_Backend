@@ -5,6 +5,7 @@ const express = require("express");
 const helmet = require("helmet");
 const fs = require('fs');
 const cors = require("cors");
+const swagger_options = require("./swagger");
 //const hash = md5("sisiblog");
 
 //📕 GET
@@ -14,21 +15,26 @@ const RegisterGET = require("./GET/REGISTER/register");
 //📕 POST
 const UserPOST = require("./POST/USER/login");
 const RegisterPOST = require("./POST/REGISTER/register");
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const port = process.env.WEB_PORT;
 const app = express();
 
-
+//SSL 미적용
 const options = {
     key: fs.readFileSync('./key/rootca.key'),
     cert: fs.readFileSync('./key/rootca.crt')
 };
 
+const specs = swaggerJSDoc(swagger_options.options);
+
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
 app.use('/images', express.static('images'));
-
+//API 문서
+app.use('/api', swaggerUi.serve, swaggerUi.setup(specs));
 
 
 app.disable('x-powered-by');
@@ -45,7 +51,6 @@ app.get("/", async (req, res) => {
         </div>
     `)  
 })
-
 
 //📕 GET
 //└─📜 User

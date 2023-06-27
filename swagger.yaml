@@ -1,0 +1,197 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+servers:
+  - url: https://localhost:5000
+tags:
+  - name: Login
+    description: 로그인 API
+  - name: Register
+    description: 회원가입 API
+paths:
+  /login/salt/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          example: hdev1004
+          description: '사용자 ID'
+          required: true
+          schema:
+            type: string
+      summary: 로그인에 필요한 Salt값
+      description: 로그인에 필요한 Salt값
+      tags:
+        - "Login"
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login_Salt'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: User not found
+        '405':
+          description: Validation exception
+  /login/jwt/token/{token}:
+    get:
+      parameters:
+        - name: token
+          in: path
+          description: '사용자토큰'
+          example: 'a534e0a96bebcbbcf83c08ba43341947'
+          required: true
+          schema:
+            type: string
+        - name: authorization
+          in: header
+          description: 'access token'
+          example: ''
+          required: false
+          schema:
+            type: string
+      summary: Access Token, Refresh Token 여부 확인
+      description: Access Token이 전송 안되는 오류.. postman으로 시도하세요.
+      tags:
+        - "Login"
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Login_Jwt'
+  /login:
+    post:
+      summary: 로그인 체크 여부
+      tags:
+        - "Login"
+      requestBody:
+        description: "로그인 확인을 위한 Request Body"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login_Request'
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Login_Response'
+  /login/jwt/token:
+    post:
+      summary: Access Key 발급
+      tags:
+        - "Login"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+      requestBody:
+        description: "Access Token과 User Token을 비교 후 Access Token, Refresh Token 자동 비교"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  description: 사용자 토큰
+                  example: a534e0a96bebcbbcf83c08ba43341947
+
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Login_Jwt_Resposne'
+        
+
+
+components:
+  schemas:
+    Login_Salt:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "200 OK"
+        data:
+          type: object
+          properties:
+            salt:
+              type: string
+              example: YxrJFNaWh0TanqrtMZRYodyyixxyvQJ5BtVoiDOpklbdBg0N1TtWWAKbW9iYrf47+1WtTyPRfA6OF2cLcydAlw==
+          description: 로그인에 필요한 Salt 값
+    Login_Jwt:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "200 OK"
+        data:
+          type: boolean
+          example: true
+          description: 인증 여부
+        access_token:
+          type: boolean
+          example: true
+          description: Access Token 인증 여부
+        refresh_token:
+          type: boolean
+          example: true
+          description: Refresh Token 인증 여부
+    Login_Request:
+      type: object
+      properties:
+        id:
+          type: string
+          example: hdev1004
+          description: 사용자 id
+        pw:
+          type: string
+          example: zGCujJNJ3QfoiQETlJvpeFOBtPFaN8LVtwcTGwr7lunbzBfnlnvJC512hxHrMlxRVOV/njOwOhLbKgoFD3bxNQ==
+          description: 암호화된 비밀번호
+    Login_Response:
+      type: object
+      properties:
+        message:
+          type: string 
+          example: "200 OK"
+        data:
+          type: object
+          description: 데이터 요청 결과
+          properties:
+            id:
+              type: string
+              example: hdev1004
+              description: 사용자 id
+            nickname:
+              type: string
+              example: "알사탕으로경로당짱먹기"
+              description: 사용자 닉네임
+            email:
+              type: string
+              example: h.dev@kakao.com
+              description: 사용자 이메일
+            token:
+              type: string
+              example: a534e0a96bebcbbcf83c08ba43341947
+              description: 사용자 토큰
+    Login_Jwt_Resposne:
+      type: object
+      properties:
+        message:
+          type: string 
+          example: "200 OK"
+        data:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImE1MzRlMGE5NmJlYmNiYmNmODNjMDhiYTQzMzQxOTQ3IiwiaWF0IjoxNjg3ODQ3Nzc3LCJleHAiOjE2ODc4NTQ5NzcsImlzcyI6Imppbndvbi1raW0ifQ.QuC49abjpHi8f3Zt8o7aenwaB5MjPJicBKCI8jiC1kE
+          description: Access Token
+
