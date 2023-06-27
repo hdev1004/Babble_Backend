@@ -111,7 +111,80 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/Login_Jwt_Resposne'
-        
+  /register/id/{id}:
+    get:
+      tags:
+        - "Register"
+      summary: 아이디 중복 체크
+      parameters:
+        - name: id
+          example: hdev1004
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: 200 OK
+                  data:
+                    type: boolean
+                    example: false
+  /register/nickname/{nickname}:
+    get:
+      tags:
+        - "Register"
+      summary: 닉네임 중복 체크
+      parameters:
+        - name: nickname
+          example: 알사탕으로경로당짱먹기
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: 200 OK
+                  data:
+                    type: boolean
+                    example: false
+  /register:
+    post:
+      tags:
+        - Register
+      summary: 회원 가입
+      requestBody:
+        description: 1062코드는 데이터 중복을 의미합니다.
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Register'
+      responses:
+        '200':
+          description: 요청 성공
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: 200 OK
 
 
 components:
@@ -194,4 +267,25 @@ components:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImE1MzRlMGE5NmJlYmNiYmNmODNjMDhiYTQzMzQxOTQ3IiwiaWF0IjoxNjg3ODQ3Nzc3LCJleHAiOjE2ODc4NTQ5NzcsImlzcyI6Imppbndvbi1raW0ifQ.QuC49abjpHi8f3Zt8o7aenwaB5MjPJicBKCI8jiC1kE
           description: Access Token
+    Register:
+      type: object
+      properties:
+        token:
+          type: string
+          example: a534e0a96bebcbbcf83c08ba43341947
+        id: 
+          type: string
+          example: hdev1004
+        pw:
+          type: string
+          example: zGCujJNJ3QfoiQETlJvpeFOBtPFaN8LVtwcTGwr7lunbzBfnlnvJC512hxHrMlxRVOV/njOwOhLbKgoFD3bxNQ==
+        salt:
+          type: string
+          example: qkoG8jYoC/ENmM2OuvBoqQ+XpMujDuvLS4X9AsDdGmZP2Db4VcKmeBhIvDDsKUAVo7BSu872CH+YTJVMgW6DYQ==
+        nickname:
+          type: string
+          example: 알사탕으로경로당짱먹기
+        email:
+          type: string
+          example: h.dev@kakao.com
 
