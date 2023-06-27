@@ -33,7 +33,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/images', express.static('images'));
 //API 문서
-app.use('/api', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(helmet());
 
 
