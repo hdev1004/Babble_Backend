@@ -3,7 +3,7 @@ info:
   title: API Title
   version: '1.0'
 servers:
-  - url: https://localhost:5000
+  - url: https://210.114.19.32:5000
 tags:
   - name: Login
     description: 로그인 API
