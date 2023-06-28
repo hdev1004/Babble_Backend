@@ -26,19 +26,38 @@ const loginCheck = (req, res) => {
                         message: "200 OK",
                         data: {}
                     }
+                    return res.send(result);
                 }
                 else if(rows.length === 1) {
-                    result = {
-                        message: "200 OK",
-                        data: rows[0]
-                    };    
+                    let user_token = rows[0].token;
+                    let new_refresh_token = jwt.tokenGenerator({
+                        token: user_token
+                    }, '14d');
+
+                    console.log("refresh_toekn : ", new_refresh_token);
+
+                    connection.query(`UPDATE TOKEN SET refresh_token="${new_refresh_token}" WHERE token="${user_token}"`, (error2, rows2, fields2) => {
+                        if(error2) {
+                            result = {
+                                message: error2.message,
+                                data: error2.errno,
+                            }
+                            return res.send(result);
+                        } else {
+                            result = {
+                                message: "200 OK",
+                                data: rows[0]
+                            }
+                            return res.send(result);
+                        }
+                    })
                 } else {
                     result = {
                         message: "400 Bad Request",
                         data: {}
                     }
+                    return res.send(result);
                 }
-                return res.send(result);
             }
         });
 
