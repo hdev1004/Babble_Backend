@@ -17,6 +17,7 @@ const UserPOST = require("./POST/USER/login");
 const RegisterPOST = require("./POST/REGISTER/register");
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const promMid = require('express-prometheus-middleware');
 
 const port = process.env.WEB_PORT;
 const app = express();
@@ -34,6 +35,15 @@ app.use(express.json());
 app.use('/images', express.static('images'));
 //API 문서
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use(promMid({
+    metricsPath: '/metrics',
+    collectDefaultMetrics: true,
+    requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+    requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+    responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+  }));
+
+
 app.use(helmet());
 
 
@@ -70,7 +80,6 @@ app.post("/login/jwt/token", UserPOST.tokenGenerator);
 app.post("/register", RegisterPOST.register);
 
 //GET
-
 
 //5000 포트로 서버 오픈
 app.listen(port, function() {
