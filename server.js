@@ -9,11 +9,13 @@ const swagger_options = require("./swagger");
 //const hash = md5("sisiblog");
 
 //📕 GET
-const UserGET = require("./GET/USER/login");
+const LoginGET = require("./GET/LOGIN/login");
 const RegisterGET = require("./GET/REGISTER/register");
+const FrinedGET = require("./GET/FRIEND/friend");
+const UserGET = require("./GET/USER/user");
 
 //📕 POST
-const UserPOST = require("./POST/USER/login");
+const LoginPOST = require("./POST/LOGIN/login");
 const RegisterPOST = require("./POST/REGISTER/register");
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -64,8 +66,15 @@ app.get("/", async (req, res) => {
 
 //📕 GET
 //└─📜 User
-app.get("/login/salt/:id", UserGET.getSalt);
-app.get("/login/jwt/token/:token", UserGET.verifyToken);
+app.get("/user/list/:nickname", UserGET.getUserList);
+app.get("/user/list/:nickname/:token", UserGET.getUserList);
+
+//└─📜 Login
+app.get("/login/salt/:id", LoginGET.getSalt);
+app.get("/login/jwt/token/:token", LoginGET.verifyToken);
+
+//└─📜 Friend
+app.get("/friend/:token", FrinedGET.getFriendList);
 
 //└─📜 Register
 app.get("/register/id/:id", RegisterGET.isIdDuplicate);
@@ -73,9 +82,9 @@ app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 
 
 //📕 POST
-//└─📜 User
-app.post("/login", UserPOST.loginCheck);
-app.post("/login/jwt/token", UserPOST.tokenGenerator);
+//└─📜 Login
+app.post("/login", LoginPOST.loginCheck);
+app.post("/login/jwt/token", LoginPOST.tokenGenerator);
 //└─📜 Register
 app.post("/register", RegisterPOST.register);
 
