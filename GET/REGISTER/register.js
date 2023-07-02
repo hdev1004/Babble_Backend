@@ -1,4 +1,4 @@
-const getConnection = require("../../db");
+const { getConnection } = require("../../db");
 
 const isNicknameDuplicate = (req, res) => {
     let result = {};

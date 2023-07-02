@@ -1,4 +1,4 @@
-const getConnection = require("../../db");
+const { getConnection } = require("../../db");
 
 const getUserList = (req, res) => {
     let result = {};
@@ -10,7 +10,9 @@ const getUserList = (req, res) => {
     if(token === undefined) {
         query = `SELECT * from LOGIN WHERE nickname LIKE "${param.nickname}%"`
     }  else {
-        query = `SELECT * from LOGIN WHERE nickname LIKE "${param.nickname}%" AND token NOT LIKE "${param.token}"`
+        query = `SELECT * FROM LOGIN AS L WHERE nickname LIKE "${param.nickname}%" and L.token NOT IN (
+            SELECT friend_token from FRIEND_REQ FR WHERE FR.token = "${param.token}"
+        ) and L.token NOT IN ("${param.token}")`
     }
     getConnection((connection) => {
         connection.query(query, (error, rows, fields) => {

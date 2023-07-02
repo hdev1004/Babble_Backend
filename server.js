@@ -17,6 +17,9 @@ const UserGET = require("./GET/USER/user");
 //📕 POST
 const LoginPOST = require("./POST/LOGIN/login");
 const RegisterPOST = require("./POST/REGISTER/register");
+const FrinedPOST = require("./POST/FRIEND/friend");
+
+// Swagger 
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const promMid = require('express-prometheus-middleware');
@@ -88,7 +91,8 @@ app.post("/login", LoginPOST.loginCheck);
 app.post("/login/jwt/token", LoginPOST.tokenGenerator);
 //└─📜 Register
 app.post("/register", RegisterPOST.register);
-
+//└─📜 Friend
+app.post("/friend/add", FrinedPOST.friendAdd);
 //GET
 
 //5000 포트로 서버 오픈

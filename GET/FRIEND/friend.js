@@ -1,4 +1,4 @@
-const getConnection = require("../../db");
+const { getConnection } = require("../../db");
 
 //친구 목록
 const getFriendList = (req, res) => {
@@ -41,7 +41,7 @@ const getFriendRequest = (req, res) => {
  
     getConnection((connection) => {
         connection.query(`SELECT FR.friend_token, FR.update_date, L.nickname  FROM FRIEND_REQ AS FR
-        LEFT JOIN LOGIN AS L ON FR.friend_token = L.token WHERE FR.token="${param.token}" ORDER BY L.nickname DESC`, (error, rows, fields) => {
+        LEFT JOIN LOGIN AS L ON FR.friend_token = L.token WHERE FR.token="${param.token}" ORDER BY FR.update_date DESC`, (error, rows, fields) => {
             if (error) {
                 result = {
                     message: error.message,
@@ -49,11 +49,17 @@ const getFriendRequest = (req, res) => {
                 }
                 return res.send(result);
             } else {
-                result = {
-                    message: "200 OK",
-                    data: rows
-                };
-            
+                if(rows.length === 0) {
+                    result = {
+                        message: "204 Content",
+                        data: []
+                    };
+                } else {
+                    result = {
+                        message: "200 OK",
+                        data: rows
+                    };
+                } 
                 return res.send(result);
             }
         });

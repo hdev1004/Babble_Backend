@@ -1,4 +1,4 @@
-const getConnection = require("../../db");
+const { getConnection } = require("../../db");
 
 const register = (req, res) => {
     let result = {};
@@ -25,9 +25,6 @@ const register = (req, res) => {
 
         connection.release();
     });
-    
-    
-    
 }
 
 module.exports = {
