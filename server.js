@@ -74,7 +74,8 @@ app.get("/login/salt/:id", LoginGET.getSalt);
 app.get("/login/jwt/token/:token", LoginGET.verifyToken);
 
 //└─📜 Friend
-app.get("/friend/:token", FrinedGET.getFriendList);
+app.get("/friend/list/:token", FrinedGET.getFriendList);
+app.get("/friend/request/:token", FrinedGET.getFriendRequest);
 
 //└─📜 Register
 app.get("/register/id/:id", RegisterGET.isIdDuplicate);
