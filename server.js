@@ -79,6 +79,7 @@ app.get("/login/jwt/token/:token", LoginGET.verifyToken);
 //└─📜 Friend
 app.get("/friend/list/:token", FrinedGET.getFriendList);
 app.get("/friend/request/:token", FrinedGET.getFriendRequest);
+app.get("/friend/request/send/:token", FrinedGET.getFriendRequestSendList);
 
 //└─📜 Register
 app.get("/register/id/:id", RegisterGET.isIdDuplicate);
@@ -93,6 +94,7 @@ app.post("/login/jwt/token", LoginPOST.tokenGenerator);
 app.post("/register", RegisterPOST.register);
 //└─📜 Friend
 app.post("/friend/add", FrinedPOST.friendAdd);
+app.post("/friend/request", FrinedPOST.friendRequest);
 //GET
 
 //5000 포트로 서버 오픈
