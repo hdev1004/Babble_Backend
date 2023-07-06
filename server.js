@@ -19,6 +19,9 @@ const LoginPOST = require("./POST/LOGIN/login");
 const RegisterPOST = require("./POST/REGISTER/register");
 const FrinedPOST = require("./POST/FRIEND/friend");
 
+//📕 DELETE
+const FriendDEL = require("./DELETE/FRIEND/friend");
+
 // Swagger 
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -95,7 +98,13 @@ app.post("/register", RegisterPOST.register);
 //└─📜 Friend
 app.post("/friend/add", FrinedPOST.friendAdd);
 app.post("/friend/request", FrinedPOST.friendRequest);
-//GET
+
+
+//📕 DELETE
+//└─📜 Friend
+app.delete("/friend/request", FriendDEL.cancleFriend);
+app.delete("/friend/refuse", FriendDEL.refuseFrined);
+app.delete("/friend", FriendDEL.unFriend);
 
 //5000 포트로 서버 오픈
 app.listen(port, function() {
