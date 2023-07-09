@@ -13,6 +13,7 @@ const LoginGET = require("./GET/LOGIN/login");
 const RegisterGET = require("./GET/REGISTER/register");
 const FrinedGET = require("./GET/FRIEND/friend");
 const UserGET = require("./GET/USER/user");
+const BoardGET = require("./GET/BOARD/board");
 
 //📕 POST
 const LoginPOST = require("./POST/LOGIN/login");
@@ -88,6 +89,9 @@ app.get("/friend/request/send/:token", FrinedGET.getFriendRequestSendList);
 app.get("/register/id/:id", RegisterGET.isIdDuplicate);
 app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 
+//└─📜 Board
+app.get("/board/list", BoardGET.getBoardKindList);
+app.get("/board/list/:id", BoardGET.getBoardKindList);
 
 //📕 POST
 //└─📜 Login
