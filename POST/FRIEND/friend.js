@@ -2,7 +2,7 @@ const { poolPromise } = require("../../db");
 
 const friendAdd = async(req, res) => {
     let body = req.body;
-    conn = await poolPromise.getConnection();
+    let conn = await poolPromise.getConnection();
     console.log("REQ : ", body);
 
     try {
@@ -16,7 +16,7 @@ const friendAdd = async(req, res) => {
         await conn.rollback();
         throw err;
     } finally {
-        await conn.release();
+        conn.release();
     }
     return res.send({
         message: "200 OK"
@@ -25,7 +25,7 @@ const friendAdd = async(req, res) => {
 
 const friendRequest = async(req, res) => {
     let body = req.body;
-    conn = await poolPromise.getConnection();
+    let conn = await poolPromise.getConnection();
     console.log("REQ : ", body);
 
     try {
@@ -36,7 +36,7 @@ const friendRequest = async(req, res) => {
         await conn.rollback();
         throw err;
     } finally {
-        await conn.release();
+        conn.release();
     }
 
     return res.send({
