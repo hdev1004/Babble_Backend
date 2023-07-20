@@ -17,8 +17,10 @@ const poolPromise = mysqlPromise.createPool({
     password : process.env.DB_PASSWORD,
     database : process.env.DB_DATABASE,
     port     : process.env.DB_PORT,
-    connectionLimit: 30,
-    enableKeepAlive: true
+    multipleStatements: true,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000
+    
 });
 
 function getConnection(callback) {
