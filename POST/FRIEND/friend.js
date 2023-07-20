@@ -13,6 +13,7 @@ const friendAdd = async(req, res) => {
         await conn.commit();
     } catch(err) {
         console.log("Err");
+        console.log(err);
         await conn.rollback();
         throw err;
     } finally {
