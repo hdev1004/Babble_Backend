@@ -2,7 +2,7 @@ const { poolPromise } = require("../../db");
 
 const friendAdd = async(req, res) => {
     let body = req.body;
-    let conn = await poolPromise.getConnection();
+    let conn = await poolPromise.getConnection(async con => con);
     console.log("REQ : ", body);
 
     try {
@@ -25,7 +25,7 @@ const friendAdd = async(req, res) => {
 
 const friendRequest = async(req, res) => {
     let body = req.body;
-    let conn = await poolPromise.getConnection();
+    let conn = await poolPromise.getConnection(async con => con);
     console.log("REQ : ", body);
 
     try {
