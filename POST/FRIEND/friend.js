@@ -13,7 +13,6 @@ const friendAdd = async(req, res) => {
         await conn.commit();
     } catch(err) {
         console.log("Err");
-        console.log(err);
         await conn.rollback();
         throw err;
     } finally {
@@ -34,7 +33,6 @@ const friendRequest = async(req, res) => {
         await conn.query(`INSERT INTO FRIEND_REQ(token, friend_token) VALUES ("${body.token}", "${body.friend_token}")`);
         await conn.commit();
     } catch(err) {
-        console.log(err);
         await conn.rollback();
         throw err;
     } finally {
