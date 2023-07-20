@@ -32,9 +32,8 @@ function getConnection(callback) {
     })
 }
 
-const getConnectionPromise = poolPromise.getConnection(async conn => conn);
 
 module.exports = {
     getConnection,
-    getConnectionPromise
+    poolPromise
 }

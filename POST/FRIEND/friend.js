@@ -1,21 +1,22 @@
-const { getConnectionPromise } = require("../../db");
+const { poolPromise } = require("../../db");
 
 const friendAdd = async(req, res) => {
     let body = req.body;
+    conn = await poolPromise.getConnection();
     console.log("REQ : ", body);
 
     try {
-        (await getConnectionPromise).beginTransaction();
-        (await getConnectionPromise).query(`INSERT INTO FRIEND_LIST(token, friend_token) VALUES ("${body.token}", "${body.friend_token}")`);
-        (await getConnectionPromise).query(`INSERT INTO FRIEND_LIST(token, friend_token) VALUES ("${body.friend_token}", "${body.token}")`);
-        (await getConnectionPromise).query(`DELETE FROM FRIEND_REQ WHERE friend_token = "${body.token}" and token = "${body.friend_token}"`);
-        (await getConnectionPromise).commit();
+        await conn.beginTransaction();
+        await conn.query(`INSERT INTO FRIEND_LIST(token, friend_token) VALUES ("${body.token}", "${body.friend_token}")`);
+        await conn.query(`INSERT INTO FRIEND_LIST(token, friend_token) VALUES ("${body.friend_token}", "${body.token}")`);
+        await conn.query(`DELETE FROM FRIEND_REQ WHERE friend_token = "${body.token}" and token = "${body.friend_token}"`);
+        await conn.commit();
     } catch(err) {
         console.log("Err");
-        (await getConnectionPromise).rollback();
+        await conn.rollback();
         throw err;
     } finally {
-        (await getConnectionPromise).release();
+        await conn.release();
     }
     return res.send({
         message: "200 OK"
@@ -24,17 +25,18 @@ const friendAdd = async(req, res) => {
 
 const friendRequest = async(req, res) => {
     let body = req.body;
+    conn = await poolPromise.getConnection();
     console.log("REQ : ", body);
 
     try {
-        (await getConnectionPromise).beginTransaction();
-        (await getConnectionPromise).query(`INSERT INTO FRIEND_REQ(token, friend_token) VALUES ("${body.token}", "${body.friend_token}")`);
-        (await getConnectionPromise).commit();
+        await conn.beginTransaction();
+        await conn.query(`INSERT INTO FRIEND_REQ(token, friend_token) VALUES ("${body.token}", "${body.friend_token}")`);
+        await conn.commit();
     } catch(err) {
-        (await getConnectionPromise).rollback();
+        await conn.rollback();
         throw err;
     } finally {
-        (await getConnectionPromise).release();
+        await conn.release();
     }
 
     return res.send({
