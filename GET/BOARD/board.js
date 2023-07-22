@@ -39,7 +39,34 @@ const getBoardList = async(req, res) => {
 
     try {
         await conn.beginTransaction();
-        result = await conn.query(`SELECT * FROM BOARD_LIST LIMIT ${(page - 1) * unit}, ${page * unit}`);
+        result = await conn.query(`SELECT *, L.nickname  FROM BOARD_LIST as B LEFT JOIN (SELECT nickname, token FROM LOGIN) as L ON B.token = L.token LIMIT ${(page - 1) * unit}, ${page * unit}`);
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        return res.status(500).send({
+            code: 500,
+            message: "Error"
+        })
+    } finally {
+        conn.release();
+    }
+    return res.send({
+        data: result[0],
+        message: "200 OK"
+    })
+}
+
+const getBoardContents = async(req, res) => {
+    let param = req.params;
+    let board_token = param.board_token;
+
+    let conn = await poolPromise.getConnection(async con => con);
+    let result = null;
+
+    try {
+        await conn.beginTransaction();
+        result = await conn.query(`SELECT * FROM BOARD WHERE board_token="${board_token}"`);
         await conn.commit();
     } catch(err) {
         console.log(err);
@@ -60,5 +87,6 @@ const getBoardList = async(req, res) => {
 
 module.exports = {
     getBoardKindList,
-    getBoardList
+    getBoardList,
+    getBoardContents
 }

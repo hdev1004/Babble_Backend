@@ -94,6 +94,7 @@ app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 app.get("/board/kind", BoardGET.getBoardKindList);
 app.get("/board/kind/:id", BoardGET.getBoardKindList);
 app.get("/board/list/:page/:unit", BoardGET.getBoardList);
+app.get("/board/:board_token", BoardGET.getBoardContents);
 
 //📕 POST
 //└─📜 Login
