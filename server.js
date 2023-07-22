@@ -19,6 +19,7 @@ const BoardGET = require("./GET/BOARD/board");
 const LoginPOST = require("./POST/LOGIN/login");
 const RegisterPOST = require("./POST/REGISTER/register");
 const FrinedPOST = require("./POST/FRIEND/friend");
+const BoardPOST = require("./POST/BOARD/board");
 
 //📕 DELETE
 const FriendDEL = require("./DELETE/FRIEND/friend");
@@ -90,8 +91,9 @@ app.get("/register/id/:id", RegisterGET.isIdDuplicate);
 app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
 
 //└─📜 Board
-app.get("/board/list", BoardGET.getBoardKindList);
-app.get("/board/list/:id", BoardGET.getBoardKindList);
+app.get("/board/kind", BoardGET.getBoardKindList);
+app.get("/board/kind/:id", BoardGET.getBoardKindList);
+app.get("/board/list/:page/:unit", BoardGET.getBoardList);
 
 //📕 POST
 //└─📜 Login
@@ -102,6 +104,9 @@ app.post("/register", RegisterPOST.register);
 //└─📜 Friend
 app.post("/friend/add", FrinedPOST.friendAdd);
 app.post("/friend/request", FrinedPOST.friendRequest);
+//└─📜 Board
+app.post("/board/add", BoardPOST.posting);
+
 
 
 //📕 DELETE

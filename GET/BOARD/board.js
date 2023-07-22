@@ -1,4 +1,4 @@
-const { getConnection } = require("../../db");
+const { getConnection, poolPromise } = require("../../db");
 
 const getBoardKindList = async (req, res) => {
     let param = req.params;
@@ -29,6 +29,36 @@ const getBoardKindList = async (req, res) => {
     });
 }
 
+const getBoardList = async(req, res) => {
+    let param = req.params;
+    let unit = parseInt(param.unit);
+    let page = parseInt(param.page);
+
+    let conn = await poolPromise.getConnection(async con => con);
+    let result = null;
+
+    try {
+        await conn.beginTransaction();
+        result = await conn.query(`SELECT * FROM BOARD_LIST LIMIT ${(page - 1) * unit}, ${page * unit}`);
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        return res.status(500).send({
+            code: 500,
+            message: "Error"
+        })
+    } finally {
+        conn.release();
+    }
+    return res.send({
+        data: result[0],
+        message: "200 OK"
+    })
+}
+
+
 module.exports = {
-    getBoardKindList
+    getBoardKindList,
+    getBoardList
 }
