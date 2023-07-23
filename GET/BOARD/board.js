@@ -39,7 +39,10 @@ const getBoardList = async(req, res) => {
 
     try {
         await conn.beginTransaction();
-        result = await conn.query(`SELECT *, L.nickname  FROM BOARD_LIST as B LEFT JOIN (SELECT nickname, token FROM LOGIN) as L ON B.token = L.token LIMIT ${(page - 1) * unit}, ${page * unit}`);
+        result = await conn.query(`SELECT *, L.nickname  FROM BOARD_LIST as B 
+            LEFT JOIN (SELECT nickname, token FROM LOGIN) as L ON B.token = L.token 
+            LEFT JOIN (SELECT board_kind, name FROM BOARD_KINDS) as BK ON B.board_kind = BK.board_kind
+            ORDER BY B.upload_date DESC LIMIT ${(page - 1) * unit}, ${page * unit}`);
         await conn.commit();
     } catch(err) {
         console.log(err);
@@ -66,7 +69,10 @@ const getBoardContents = async(req, res) => {
 
     try {
         await conn.beginTransaction();
-        result = await conn.query(`SELECT * FROM BOARD WHERE board_token="${board_token}"`);
+        result = await conn.query(`SELECT * FROM BOARD_LIST as BL 
+        LEFT JOIN (SELECT board_token, post FROM BOARD) as B ON BL.board_token = B.board_token
+        LEFT JOIN (SELECT board_kind, name FROM BOARD_KINDS) as BK ON BL.board_kind = BK.board_kind
+        LEFT JOIN (SELECT token, nickname FROM LOGIN) as L ON BL.token = L.token WHERE BL.board_token="${board_token}"`);
         await conn.commit();
     } catch(err) {
         console.log(err);
