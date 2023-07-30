@@ -1,6 +1,7 @@
 //최상위
 require('dotenv').config();
 
+
 const express = require("express");
 const helmet = require("helmet");
 const fs = require('fs');
@@ -8,21 +9,11 @@ const cors = require("cors");
 const swagger_options = require("./swagger");
 //const hash = md5("sisiblog");
 
-//📕 GET
-const LoginGET = require("./GET/LOGIN/login");
-const RegisterGET = require("./GET/REGISTER/register");
-const FrinedGET = require("./GET/FRIEND/friend");
-const UserGET = require("./GET/USER/user");
-const BoardGET = require("./GET/BOARD/board");
-
-//📕 POST
-const LoginPOST = require("./POST/LOGIN/login");
-const RegisterPOST = require("./POST/REGISTER/register");
-const FrinedPOST = require("./POST/FRIEND/friend");
-const BoardPOST = require("./POST/BOARD/board");
-
-//📕 DELETE
-const FriendDEL = require("./DELETE/FRIEND/friend");
+const UserRoutes = require("./ROUTES/USER/index");
+const LoginRoutes = require("./ROUTES/LOGIN/index");
+const FriendRoutes = require("./ROUTES/FRIEND/index");
+const BoardRoutes = require("./ROUTES/BOARD/index");
+const RegisterRoutes = require("./ROUTES/REGISTER/index");
 
 // Swagger 
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -56,12 +47,15 @@ app.use(promMid({
 
 app.use(helmet());
 
+//Routes
+app.use("/user", UserRoutes);
+app.use("/login", LoginRoutes);
+app.use("/friend", FriendRoutes);
+app.use("/board", BoardRoutes);
+app.use("/register", RegisterRoutes);
+
 
 app.disable('x-powered-by');
-
-//let data = jwt.tokenGenerator("hello", "test");
-//console.log("TOKEN : ", data);
-
 
 app.get("/", async (req, res) => {
     res.send(`
@@ -72,49 +66,6 @@ app.get("/", async (req, res) => {
     `)  
 })
 
-//📕 GET
-//└─📜 User
-app.get("/user/list/:nickname", UserGET.getUserList);
-app.get("/user/list/:nickname/:token", UserGET.getUserList);
-
-//└─📜 Login
-app.get("/login/salt/:id", LoginGET.getSalt);
-app.get("/login/jwt/token/:token", LoginGET.verifyToken);
-
-//└─📜 Friend
-app.get("/friend/list/:token", FrinedGET.getFriendList);
-app.get("/friend/request/:token", FrinedGET.getFriendRequest);
-app.get("/friend/request/send/:token", FrinedGET.getFriendRequestSendList);
-
-//└─📜 Register
-app.get("/register/id/:id", RegisterGET.isIdDuplicate);
-app.get("/register/nickname/:nickname", RegisterGET.isNicknameDuplicate);
-
-//└─📜 Board
-app.get("/board/kind", BoardGET.getBoardKindList);
-app.get("/board/kind/:id", BoardGET.getBoardKindList);
-app.get("/board/list/:page/:unit", BoardGET.getBoardList);
-app.get("/board/:board_token", BoardGET.getBoardContents);
-
-//📕 POST
-//└─📜 Login
-app.post("/login", LoginPOST.loginCheck);
-app.post("/login/jwt/token", LoginPOST.tokenGenerator);
-//└─📜 Register
-app.post("/register", RegisterPOST.register);
-//└─📜 Friend
-app.post("/friend/add", FrinedPOST.friendAdd);
-app.post("/friend/request", FrinedPOST.friendRequest);
-//└─📜 Board
-app.post("/board/add", BoardPOST.posting);
-
-
-
-//📕 DELETE
-//└─📜 Friend
-app.delete("/friend/request", FriendDEL.cancleFriend);
-app.delete("/friend/refuse", FriendDEL.refuseFrined);
-app.delete("/friend", FriendDEL.unFriend);
 
 //5000 포트로 서버 오픈
 app.listen(port, function() {
