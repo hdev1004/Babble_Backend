@@ -87,6 +87,73 @@ const getBoardContents = async(param) => {
     }
 }
 
+const addComment = async(body) => {
+    let board_token = body.board_token;
+    let target_token = body.target_token;
+    let comment_token = body.comment_token;
+    let writer_token = body.writer_token;
+    let status = body.status;
+    let comment = body.comment;
+
+    let isError = false;
+
+    let conn = await poolPromise.getConnection(async con => con);
+    let rows = null;
+
+    
+    try {
+        await conn.beginTransaction();
+        await conn.query(`INSERT INTO COMMENTS_TOKEN(board_token, target_token, comment_token, writer_token, status) VALUES 
+        ("${board_token}", "${target_token}", "${comment_token}", "${writer_token}", ${status})`);
+        await conn.query(`INSERT INTO COMMENTS(comment_token, comment) VALUES ("${comment_token}", "${comment}")`);
+        
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError,
+        data: rows
+    }
+
+}
+
+const getCommentList = async(param) => {
+    let board_token = param.board_token;
+    let isError = false;
+    let conn = await poolPromise.getConnection(async con => con);
+    let rows = null;
+    
+    try {
+        await conn.beginTransaction();
+        [rows] = await conn.query(`SELECT * FROM COMMENTS_TOKEN AS CT
+        LEFT JOIN (SELECT comment_token, comment FROM COMMENTS) AS C ON CT.comment_token = C.comment_token
+        LEFT JOIN (SELECT token, nickname FROM LOGIN) AS L ON CT.writer_token = L.token 
+        WHERE CT.board_token = "${board_token}" ORDER BY upload_date ASC`);
+       
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError,
+        data: rows
+    }
+
+}
+
+
+
 const posting =  async(body) => {
     let isError = false;
     let conn = await poolPromise.getConnection(async con => con);
@@ -123,5 +190,7 @@ module.exports = {
     getBoardKindList,
     getBoardList,
     getBoardContents,
-    posting
+    posting,
+    addComment,
+    getCommentList
 }

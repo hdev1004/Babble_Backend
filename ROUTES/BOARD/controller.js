@@ -54,6 +54,7 @@ const getBoardContents = async(req, res) => {
     }
 }
 
+//포스팅
 const posting =  async(req, res) => {
     let body = req.body;
     console.log(body);
@@ -72,10 +73,48 @@ const posting =  async(req, res) => {
     }
 }
 
+const addComment = async(req, res) => {
+    let body = req.body;
+    console.log(body);
+ 
+    let data = await model.addComment(body);
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 AddComment Error"
+        })
+    }
+}
+
+const getCommentList = async(req, res) => {
+    let param = req.params;
+    console.log(param);
+
+    let data = await model.getCommentList(param);
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 Posting Error"
+        })
+    }
+}
+
 
 module.exports = {
     getBoardList,
     getBoardKindList,
     getBoardContents,
-    posting
+    posting,
+    addComment,
+    getCommentList
 }
