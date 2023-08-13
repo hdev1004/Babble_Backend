@@ -103,9 +103,12 @@ const addComment = async(body) => {
     
     try {
         await conn.beginTransaction();
-        await conn.query(`INSERT INTO COMMENTS_TOKEN(board_token, target_token, comment_token, writer_token, status) VALUES 
-        ("${board_token}", "${target_token}", "${comment_token}", "${writer_token}", ${status})`);
-        await conn.query(`INSERT INTO COMMENTS(comment_token, comment) VALUES ("${comment_token}", "${comment}")`);
+        if(target_token === '') { //일반 댓글
+            await conn.query(`INSERT INTO COMMENTS(board_token, writer_token, comment_token, comment) VALUES ("${board_token}", "${writer_token}", "${comment_token}", "${comment}")`);
+        } else { //대댓글
+            await conn.query(`INSERT INTO REPLIY_COMMENT(comment_token, writer_token, target_token, recomment) VALUES ("${comment_token}", "${writer_token}", "${target_token}","${comment}")`);
+        }
+        
         
         await conn.commit();
     } catch(err) {
@@ -131,10 +134,16 @@ const getCommentList = async(param) => {
     
     try {
         await conn.beginTransaction();
-        [rows] = await conn.query(`SELECT * FROM COMMENTS_TOKEN AS CT
-        LEFT JOIN (SELECT comment_token, comment FROM COMMENTS) AS C ON CT.comment_token = C.comment_token
-        LEFT JOIN (SELECT token, nickname FROM LOGIN) AS L ON CT.writer_token = L.token 
-        WHERE CT.board_token = "${board_token}" ORDER BY upload_date ASC`);
+        [rows] = await conn.query(`
+            SELECT C.*, 
+            RC.target_token, RC.writer_token AS reply_writer_token, RC.comment_token AS reply_comment_token, RC.comment AS reply_comment, RC.upload_date AS reply_upload_date,
+            (SELECT nickname FROM LOGIN WHERE token = C.writer_token) AS nickname,
+            (SELECT nickname FROM LOGIN WHERE token = RC.writer_token) AS reply_writer_nickname
+            FROM COMMENTS C 
+            LEFT JOIN REPLY_COMMENTS RC ON C.comment_token = RC.target_token
+            WHERE C.board_token = "${board_token}"
+            ORDER BY C.upload_date ASC, RC.upload_date ASC;
+        `);
        
         await conn.commit();
     } catch(err) {
