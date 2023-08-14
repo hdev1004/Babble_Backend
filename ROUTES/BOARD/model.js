@@ -92,7 +92,6 @@ const addComment = async(body) => {
     let target_token = body.target_token;
     let comment_token = body.comment_token;
     let writer_token = body.writer_token;
-    let status = body.status;
     let comment = body.comment;
 
     let isError = false;
@@ -103,10 +102,10 @@ const addComment = async(body) => {
     
     try {
         await conn.beginTransaction();
-        if(target_token === '') { //일반 댓글
+        if(target_token === undefined) { //일반 댓글
             await conn.query(`INSERT INTO COMMENTS(board_token, writer_token, comment_token, comment) VALUES ("${board_token}", "${writer_token}", "${comment_token}", "${comment}")`);
         } else { //대댓글
-            await conn.query(`INSERT INTO REPLIY_COMMENT(comment_token, writer_token, target_token, recomment) VALUES ("${comment_token}", "${writer_token}", "${target_token}","${comment}")`);
+            await conn.query(`INSERT INTO REPLY_COMMENTS(comment_token, writer_token, target_token, comment) VALUES ("${comment_token}", "${writer_token}", "${target_token}","${comment}")`);
         }
         
         

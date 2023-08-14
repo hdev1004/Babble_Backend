@@ -3,7 +3,7 @@ const friendController = require('./controller');
 
 const router = express.Router();
 
-//Get Salt
+//친구 목록
 router.get("/list/:token", friendController.getFriendList);
 
 //친구 요청 리스트
