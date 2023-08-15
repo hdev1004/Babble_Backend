@@ -18,4 +18,13 @@ router.post("/add", boardController.posting);
 router.get("/comment/:board_token", boardController.getCommentList);
 router.post("/comment/add", boardController.addComment);
 
+//좋아요
+router.post("/add/like", boardController.addBoardLike);
+
+//좋아요 취소
+router.post("/cancel/like", boardController.cancelBoardLike);
+
+//좋아요 검색
+router.post("/check/like", boardController.boardLikeCheck);
+
 module.exports = router;

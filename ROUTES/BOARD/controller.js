@@ -93,7 +93,6 @@ const addComment = async(req, res) => {
 
 const getCommentList = async(req, res) => {
     let param = req.params;
-    console.log(param);
 
     let data = await model.getCommentList(param);
     if(!data.isError) {
@@ -109,8 +108,64 @@ const getCommentList = async(req, res) => {
     }
 }
 
+const addBoardLike = async(req, res) => {
+    let body = req.body;
+
+    let data = await model.addBoardLike(body);
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 Posting Error"
+        })
+    }
+}
+
+
+const cancelBoardLike = async(req, res) => {
+    let body = req.body;
+    console.log(body);
+
+    let data = await model.cancelBoardLike(body);
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 Posting Error"
+        })
+    }
+}
+
+const boardLikeCheck = async(req, res) => {
+    let body = req.body;
+    console.log(body);
+
+    let data = await model.boardLikeCheck(body);
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 Posting Error"
+        })
+    }
+}
 
 module.exports = {
+    boardLikeCheck,
+    addBoardLike,
+    cancelBoardLike,
     getBoardList,
     getBoardKindList,
     getBoardContents,

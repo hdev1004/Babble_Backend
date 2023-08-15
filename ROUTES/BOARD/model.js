@@ -40,7 +40,9 @@ const getBoardList = async(param) => {
 
     try {
         await conn.beginTransaction();
-        [rows] = await conn.query(`SELECT *, L.nickname  FROM BOARD_LIST as B 
+        [rows] = await conn.query(`SELECT *, L.nickname,
+            IFNULL((SELECT count(*) FROM BOARD_LIKES BL WHERE B.board_token = BL.board_token GROUP BY board_token), 0) AS likes 
+            FROM BOARD_LIST as B 
             LEFT JOIN (SELECT nickname, token FROM LOGIN) as L ON B.token = L.token 
             LEFT JOIN (SELECT board_kind, name FROM BOARD_KINDS) as BK ON B.board_kind = BK.board_kind
             ORDER BY B.upload_date DESC LIMIT ${(page - 1) * unit}, ${page * unit}`);
@@ -176,7 +178,7 @@ const posting =  async(body) => {
     try {
         await conn.beginTransaction();
         let [res] = await conn.query(`SELECT * FROM BOARD_KINDS WHERE name="${category}"`);
-        await conn.query(`INSERT INTO BOARD_LIST(board_token, board_kind, token, title, likes) VALUES ("${board_token}", "${res[0].board_kind}", "${token}", "${title}", 0)`);
+        await conn.query(`INSERT INTO BOARD_LIST(board_token, board_kind, token, title) VALUES ("${board_token}", "${res[0].board_kind}", "${token}", "${title}")`);
         await conn.query(`INSERT INTO BOARD(board_token, token, post) VALUES ("${board_token}", "${token}", "${content}")`);
         await conn.commit();
     } catch(err) {
@@ -193,8 +195,90 @@ const posting =  async(body) => {
 }
 
 
+const addBoardLike = async (body) => {
+    const board_token = body.board_token;
+    const user_token = body.user_token;
+    let isError = false;
+    let conn = await poolPromise.getConnection(async con => con);
+    
+    try {
+        await conn.beginTransaction();
+        await conn.query(`INSERT INTO BOARD_LIKES(board_token, user_token) VALUES("${board_token}", "${user_token}")`);
+       
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError
+    }
+}
+
+const cancelBoardLike = async (body) => {
+    const board_token = body.board_token;
+    const user_token = body.user_token;
+    let isError = false;
+    let conn = await poolPromise.getConnection(async con => con);
+    
+    try {
+        await conn.beginTransaction();
+        await conn.query(`DELETE FROM BOARD_LIKES WHERE board_token="${board_token}" and user_token="${user_token}"`);
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError
+    }
+}
+
+
+const boardLikeCheck = async (body) => {
+    const board_token = body.board_token;
+    const user_token = body.user_token;
+    let isError = false;
+    let conn = await poolPromise.getConnection(async con => con);
+    let data = {};
+    
+    try {
+        await conn.beginTransaction();
+        let [isLike] = await conn.query(`SELECT * FROM BOARD_LIKES WHERE board_token="${board_token}" and user_token="${user_token}"`);
+        let [count] = await conn.query(`SELECT COUNT(*) AS board_count FROM BOARD_LIKES WHERE board_token="${board_token}" GROUP BY board_token`) 
+
+        data = {
+            isLike: isLike.length === 1 ? true : false,
+            board_count: count.length === 0 ? 0 : count[0].board_count
+        }
+        await conn.commit();
+    } catch(err) {
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError,
+        data: data
+    }
+}
+
 
 module.exports = {
+    boardLikeCheck,
+    addBoardLike,
+    cancelBoardLike,
     getBoardKindList,
     getBoardList,
     getBoardContents,
