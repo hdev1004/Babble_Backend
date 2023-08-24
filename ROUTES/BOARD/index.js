@@ -1,5 +1,5 @@
 const express = require("express");
-const boardController = require('./controller');
+const boardController = require("./controller");
 
 const router = express.Router();
 
@@ -26,5 +26,8 @@ router.post("/cancel/like", boardController.cancelBoardLike);
 
 //좋아요 검색
 router.post("/check/like", boardController.boardLikeCheck);
+
+//닉네임 변경
+router.post("/changeNickname", boardController.changeNickname);
 
 module.exports = router;
