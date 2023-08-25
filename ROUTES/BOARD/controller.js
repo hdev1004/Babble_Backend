@@ -170,7 +170,45 @@ const changeNickname = async (req, res) => {
   }
 };
 
+const myPost = async (req, res) => {
+  let body = req.body;
+  console.log(body);
+
+  let data = await model.myPost(body);
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 changeKickname Error",
+    });
+  }
+};
+
+const myComments = async (req, res) => {
+  let body = req.body;
+  console.log(body);
+
+  let data = await model.myComments(body);
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 changeKickname Error",
+    });
+  }
+};
+
 module.exports = {
+  myComments,
+  myPost,
   changeNickname,
   boardLikeCheck,
   addBoardLike,

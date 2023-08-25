@@ -293,11 +293,15 @@ const changeNickname = async (body) => {
   let data = {};
 
   const nickname = body.nickname;
+  const user_token = body.user_token;
 
   try {
     await conn.beginTransaction();
     let [chNick] = await conn.query(
       `SELECT nickname FROM LOGIN WHERE nickname= "${nickname}"`
+    );
+    await conn.query(
+      `UPDATE LOGIN SET nickname = "${nickname}" WHERE token = "${user_token}"`
     );
 
     data = chNick;
@@ -317,7 +321,76 @@ const changeNickname = async (body) => {
   };
 };
 
+const myPost = async (body) => {
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con); //DB연결
+  let data = {};
+
+  const user_token = body.user_token;
+
+  try {
+    await conn.beginTransaction();
+    let [myPost] = await conn.query(
+      `SELECT * FROM BOARD_LIST WHERE token = "${user_token}"`
+    );
+
+    data = myPost;
+
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+    data: data,
+  };
+};
+
+const myComments = async (body) => {
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con); //DB연결
+  let data = {};
+
+  const user_token = body.user_token;
+
+  try {
+    await conn.beginTransaction();
+    let [myComments] = await conn.query(
+      `SELECT C.*, 
+      RC.target_token, RC.writer_token AS reply_writer_token, RC.comment_token AS reply_comment_token, RC.comment AS reply_comment, RC.upload_date AS reply_upload_date,
+      (SELECT nickname FROM LOGIN WHERE token = C.writer_token) AS nickname,
+      (SELECT nickname FROM LOGIN WHERE token = RC.writer_token) AS reply_writer_nickname
+      FROM COMMENTS C 
+      LEFT JOIN REPLY_COMMENTS RC ON C.comment_token = RC.target_token
+      WHERE C.writer_token = "${user_token}"
+      ORDER BY C.upload_date ASC, RC.upload_date ASC`
+    );
+
+    data = myComments;
+
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+    data: data,
+  };
+};
+
 module.exports = {
+  myComments,
+  myPost,
   changeNickname,
   boardLikeCheck,
   addBoardLike,

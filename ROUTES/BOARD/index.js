@@ -30,4 +30,10 @@ router.post("/check/like", boardController.boardLikeCheck);
 //닉네임 변경
 router.post("/changeNickname", boardController.changeNickname);
 
+//내 게시글 리스트
+router.post("/myPost", boardController.myPost);
+
+//내 댓글 리스트
+router.post("/myComments", boardController.myComments);
+
 module.exports = router;
