@@ -206,6 +206,25 @@ const myComments = async (req, res) => {
   }
 };
 
+const boardSearch = async (req, res) => {
+  let params = req.params;
+  console.log("Search : ", params);
+
+  let data = await model.boardSearch(params);
+  
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 changeKickname Error",
+    });
+  }
+};
+
 module.exports = {
   myComments,
   myPost,
@@ -219,4 +238,5 @@ module.exports = {
   posting,
   addComment,
   getCommentList,
+  boardSearch
 };

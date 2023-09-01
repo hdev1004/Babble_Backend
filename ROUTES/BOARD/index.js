@@ -36,4 +36,6 @@ router.post("/myPost", boardController.myPost);
 //내 댓글 리스트
 router.post("/myComments", boardController.myComments);
 
+router.get("/search/:search", boardController.boardSearch);
+
 module.exports = router;

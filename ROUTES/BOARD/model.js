@@ -388,6 +388,41 @@ const myComments = async (body) => {
   };
 };
 
+
+const boardSearch = async (param) => {
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con); //DB연결
+  let data = {};
+
+  const search = param.search;
+
+  // 
+
+  try {
+    await conn.beginTransaction();
+    let [temp] = await conn.query(
+      `select *
+      from BOARD_LIST
+      WHERE title LIKE '%${search}%'`
+    );
+
+    data = temp;
+
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+    data: data,
+  };
+};
+
 module.exports = {
   myComments,
   myPost,
@@ -401,4 +436,5 @@ module.exports = {
   posting,
   addComment,
   getCommentList,
+  boardSearch
 };
