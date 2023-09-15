@@ -194,6 +194,30 @@ const refuseFrined = async(body) => {
 }
 
 
+const listFriend = async () => {
+    let rows = [];
+    let isError = false;
+    let conn = await poolPromise.getConnection(async con => con);
+ 
+    try {
+        await conn.beginTransaction();
+        [rows] = await conn.query(`SELECT * from FRIEND_LIST`);
+        await conn.commit();
+    } catch(err) {
+        console.log("FRINED_REQUEST - ERR");
+        console.log(err);
+        await conn.rollback();
+        isError = true;
+    } finally {
+        conn.release();
+    }
+
+    return {
+        isError: isError,
+        data: rows
+    }
+} 
+
 module.exports = {
     getFriendList,
     getFriendRequest,
@@ -202,5 +226,6 @@ module.exports = {
     friendRequest,
     unFriend,
     cancleFriend,
-    refuseFrined
+    refuseFrined,
+    listFriend
 }

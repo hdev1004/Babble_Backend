@@ -388,67 +388,6 @@ const myComments = async (body) => {
   };
 };
 
-const unRegister = async (body) => {
-  const token = body.token;
-  let isError = false;
-  let conn = await poolPromise.getConnection(async (con) => con);
-
-  try {
-    await conn.beginTransaction();
-    await conn.query(`DELETE FROM LOGIN WHERE token="${token}"`);
-    await conn.commit();
-  } catch (err) {
-    console.log(err);
-    await conn.rollback();
-    isError = true;
-  } finally {
-    conn.release(); //반환, 재사용 하려고
-  }
-
-  return {
-    isError: isError,
-  };
-};
-
-const totalPostCnt = async (body) => {
-  let isError = false;
-  let conn = await poolPromise.getConnection(async (con) => con);
-  let data = {};
-
-  try {
-    await conn.beginTransaction();
-    //게시판 종류
-    let [bkList] = await conn.query(
-      `SELECT DISTINCT BK.name
-      FROM BOARD_LIST AS BL 
-      LEFT JOIN BOARD_KINDS AS BK ON BL.board_kind = BK.board_kind;
-      `
-    );
-
-    //게시글 카운트
-    let [blCnt] = await conn.query(
-      `SELECT count(board_kind)AS cnt
-      from BOARD_LIST bl
-      group by board_kind `
-    );
-
-    (data = bkList), blCnt;
-
-    await conn.commit();
-  } catch (err) {
-    console.log(err);
-    await conn.rollback();
-    isError = true;
-  } finally {
-    conn.release(); //반환, 재사용 하려고
-  }
-
-  return {
-    isError: isError,
-    data: data,
-  };
-};
-
 module.exports = {
   totalPostCnt,
   unRegister,
@@ -464,4 +403,5 @@ module.exports = {
   posting,
   addComment,
   getCommentList,
+  boardSearch,
 };

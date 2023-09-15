@@ -142,6 +142,23 @@ const refuseFrined = async(req, res) => {
     }
 }
 
+const listFriend = async(req, res) => {
+   
+    let data = await model.listFriend();
+    
+    if(!data.isError) {
+        return res.send({
+            message: "200 OK",
+            data: data.data
+        })
+    }
+    else {
+        return res.status(500).send({
+            message: "500 FriendRequest Error"
+        })
+    }
+}
+
 
 module.exports = {
     getFriendList,
@@ -151,5 +168,6 @@ module.exports = {
     friendRequest,
     unFriend,
     cancleFriend,
-    refuseFrined
+    refuseFrined,
+    listFriend
 }

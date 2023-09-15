@@ -28,4 +28,6 @@ router.delete("/refuse", friendController.refuseFrined);
 //친구 끊기
 router.delete("/", friendController.unFriend);
 
+router.get("/listFriend", friendController.listFriend);
+
 module.exports = router;
