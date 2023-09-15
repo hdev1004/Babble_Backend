@@ -36,4 +36,10 @@ router.post("/myPost", boardController.myPost);
 //내 댓글 리스트
 router.post("/myComments", boardController.myComments);
 
+//회원탈퇴
+router.post("/unRegister", boardController.unRegister);
+
+//게시글 카운트
+router.post("/totalPostCnt", boardController.totalPostCnt);
+
 module.exports = router;
