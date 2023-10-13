@@ -40,6 +40,7 @@ const getBoardList = async (param) => {
 
   try {
     await conn.beginTransaction();
+    [count] = await conn.query(`SELECT COUNT(*) AS "COUNT" FROM BOARD_LIST WHERE board_kind = ${kind};`);
     [rows] = await conn.query(`SELECT *, L.nickname,
             IFNULL((SELECT count(*) FROM BOARD_LIKES BL WHERE B.board_token = BL.board_token GROUP BY board_token), 0) AS likes 
             FROM BOARD_LIST as B 
@@ -60,6 +61,7 @@ const getBoardList = async (param) => {
 
   return {
     data: rows,
+    count: count[0].COUNT,
     isError: isError,
   };
 };

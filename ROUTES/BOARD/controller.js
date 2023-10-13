@@ -26,6 +26,7 @@ const getBoardList = async (req, res) => {
     return res.send({
       message: "200 OK",
       data: data.data,
+      count: data.count
     });
   } else {
     return res.status(500).send({
