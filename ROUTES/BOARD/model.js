@@ -33,6 +33,7 @@ const getBoardList = async (param) => {
   let isError = false;
   let unit = parseInt(param.unit);
   let page = parseInt(param.page);
+  let kind = parseInt(param.kind);
 
   let conn = await poolPromise.getConnection(async (con) => con);
   let rows = null;
@@ -44,8 +45,9 @@ const getBoardList = async (param) => {
             FROM BOARD_LIST as B 
             LEFT JOIN (SELECT nickname, token FROM LOGIN) as L ON B.token = L.token 
             LEFT JOIN (SELECT board_kind, name FROM BOARD_KINDS) as BK ON B.board_kind = BK.board_kind
+            WHERE B.board_kind = ${kind}
             ORDER BY B.upload_date DESC LIMIT ${(page - 1) * unit}, ${
-      page * unit
+      unit
     }`);
     await conn.commit();
   } catch (err) {
@@ -372,6 +374,100 @@ const myComments = async (body) => {
     );
 
     data = myComments;
+
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+    data: data,
+  };
+};
+
+const unRegister = async (body) => {
+  const token = body.token;
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con);
+
+  try {
+    await conn.beginTransaction();
+    await conn.query(`DELETE FROM LOGIN WHERE token="${token}"`);
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+  };
+};
+
+const totalPostCnt = async (body) => {
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con);
+  let data = {};
+
+  try {
+    await conn.beginTransaction();
+    //게시판 종류
+    let [bkList] = await conn.query(
+      `SELECT DISTINCT BK.name
+      FROM BOARD_LIST AS BL 
+      LEFT JOIN BOARD_KINDS AS BK ON BL.board_kind = BK.board_kind;
+      `
+    );
+
+    //게시글 카운트
+    let [blCnt] = await conn.query(
+      `SELECT count(board_kind)AS cnt
+      from BOARD_LIST bl
+      group by board_kind `
+    );
+
+    (data = bkList), blCnt;
+
+    await conn.commit();
+  } catch (err) {
+    console.log(err);
+    await conn.rollback();
+    isError = true;
+  } finally {
+    conn.release(); //반환, 재사용 하려고
+  }
+
+  return {
+    isError: isError,
+    data: data,
+  };
+};
+const boardSearch = async (param) => {
+  let isError = false;
+  let conn = await poolPromise.getConnection(async (con) => con); //DB연결
+  let data = {};
+
+  const search = param.search;
+
+  // 
+
+  try {
+    await conn.beginTransaction();
+    let [temp] = await conn.query(
+      `select *
+      from BOARD_LIST
+      WHERE title LIKE '%${search}%'`
+    );
+
+    data = temp;
 
     await conn.commit();
   } catch (err) {

@@ -206,6 +206,61 @@ const myComments = async (req, res) => {
   }
 };
 
+const unRegister = async (req, res) => {
+  let body = req.body;
+  console.log(body);
+
+  let data = await model.unRegister(body);
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 unRegister Error",
+    });
+  }
+};
+
+const totalPostCnt = async (req, res) => {
+  let body = req.body;
+  console.log(body);
+
+  let data = await model.totalPostCnt(body);
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 totalPostCnt Error",
+    });
+  }
+};
+
+const boardSearch = async (req, res) => {
+  let params = req.params;
+  console.log("Search : ", params);
+
+  let data = await model.boardSearch(params);
+
+
+  if (!data.isError) {
+    return res.send({
+      message: "200 OK",
+      data: data.data,
+    });
+  } else {
+    return res.status(500).send({
+      message: "500 changeKickname Error",
+    });
+  }
+};
+
 module.exports = {
   totalPostCnt,
   unRegister,
